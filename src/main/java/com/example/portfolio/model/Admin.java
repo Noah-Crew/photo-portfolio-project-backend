@@ -1,10 +1,12 @@
 package com.example.portfolio.model;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class Admin {
+public class Admin implements Serializable {
 	
 	@Id
 	private String id;

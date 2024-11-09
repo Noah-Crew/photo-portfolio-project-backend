@@ -41,7 +41,6 @@ public class PhotoService {
 	            photo.setImgtype("image/webp"); // 변환 후 이미지 형식을 webp로 설정
 	            photo.setProjectId(projectId);
 	            photoRepository.save(photo);
-	       
 	    }
 	}
 
