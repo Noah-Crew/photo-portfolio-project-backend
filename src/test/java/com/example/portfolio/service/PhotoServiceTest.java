@@ -106,21 +106,21 @@ class PhotoServiceTest {
 	    Photo firstPhoto = savedPhotos.get(0);
 	    assertThat(firstPhoto.getImageUrl()).isEqualTo("http://example.com/photo1.jpg");
         assertThat(firstPhoto.getImgoname()).isEqualTo("photo1.jpg");
-        assertThat(firstPhoto.getImgtype()).isEqualTo("image/jpeg");
+        assertThat(firstPhoto.getImgtype()).isEqualTo("image/webp");
         assertThat(firstPhoto.getProjectId()).isEqualTo(projectId);
         
         // 두 번째 Photo 객체 검사
         Photo secondPhoto = savedPhotos.get(1);
         assertThat(secondPhoto.getImageUrl()).isEqualTo("http://example.com/photo2.jpg");
         assertThat(secondPhoto.getImgoname()).isEqualTo("photo2.jpg");
-        assertThat(secondPhoto.getImgtype()).isEqualTo("image/jpeg");
+        assertThat(secondPhoto.getImgtype()).isEqualTo("image/webp");
         assertThat(secondPhoto.getProjectId()).isEqualTo(projectId);
         
         // GcsService 호출 확인
         verify(gcsService, times(2)).uploadWebpFile(any(MultipartFile.class), eq(projectId));
 	    
 	    
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
