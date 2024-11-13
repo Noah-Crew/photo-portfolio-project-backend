@@ -41,13 +41,13 @@ public class WebSecurityConfig {
 	        // H2 콘솔에 대한 접근 허용
 	        .requestMatchers("/h2-console/**").permitAll()
 	        // 특정 요청 보안 설정
-	        .requestMatchers("/Admin/**").authenticated()
+	        .requestMatchers("/admin/**").authenticated()
 	        // permitAll() : 인증 없이 접근 허용 
 	        .anyRequest().permitAll()	
 	    )
 	    .formLogin(form -> form
 	        // 로그인 성공 시 이동할 url
-	    		.loginPage("/Admin/Login")
+	    		.loginPage("/admin/login")
 				.loginProcessingUrl("/loginProcess")
 				.usernameParameter("id")
 				.defaultSuccessUrl("/api/loginSucess")
