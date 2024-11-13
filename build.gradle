@@ -45,7 +45,11 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
     
     // Image Processing
-	implementation 'org.sejda.imageio:webp-imageio:0.1.6'
+  implementation "com.sksamuel.scrimage:scrimage-core:4.0.32"
+    implementation "com.sksamuel.scrimage:scrimage-webp:4.0.32"// WebP 지원을 위한 모듈
+
+	implementation 'com.google.cloud:google-cloud-storage:2.25.0'
+
     
     // Spring Cache
     implementation 'org.springframework.boot:spring-boot-starter-cache'
