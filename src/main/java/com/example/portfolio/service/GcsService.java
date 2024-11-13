@@ -76,7 +76,7 @@ public class GcsService {
 			// 압축 품질 설정 (0.0f ~ 1.0f)
 			if (writeParam.canWriteCompressed()) {
 				writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-				writeParam.setCompressionQuality(0.8f); // 압축률 설정 (0.8 = 80% 품질)
+				writeParam.setCompressionQuality(0.6f); // 압축률 설정 (0.6 = 60% 품질)
 			}
 
 			// 이미지 작성
