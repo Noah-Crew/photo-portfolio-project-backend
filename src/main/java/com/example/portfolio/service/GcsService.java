@@ -3,20 +3,15 @@ package com.example.portfolio.service;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -57,43 +52,35 @@ public class GcsService {
         }
     }
 
-
-    // WebP 파일 업로드 메서드
+ // WebP 파일 업로드 메서드
     public String uploadWebpFile(MultipartFile multipartFile, Long projectId) {
-        String uuid = UUID.randomUUID().toString();
-        String objectName = projectId + "/" + uuid + ".webp";
-        
-        try (InputStream inputStream = multipartFile.getInputStream()) {
-            BufferedImage originalImage = ImageIO.read(inputStream);
-            BufferedImage resizedImage = resizeImage(originalImage);
+        try {
+            // 이미지를 BufferedImage로 읽기
+            BufferedImage originalImage = ImageIO.read(multipartFile.getInputStream());
             
-            // 임시 파일 생성
-            Path tempFile = Files.createTempFile("temp-", ".webp");
-            
-            // WebP 변환 및 임시 파일에 저장
-            ImageWriter writer = ImageIO.getImageWritersByFormatName("webp").next();
-            try (ImageOutputStream ios = ImageIO.createImageOutputStream(tempFile.toFile())) {
-                writer.setOutput(ios);
-                writer.write(null, new IIOImage(resizedImage, null, null), writer.getDefaultWriteParam());
-            } finally {
-                writer.dispose();
-            }
-            
-            // GCP에 업로드
+            // WebP로 변환
+            ByteArrayOutputStream webpOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(originalImage, "webp", webpOutputStream);
+            byte[] webpBytes = webpOutputStream.toByteArray();
+
+            // 파일명 생성
+            String uuid = UUID.randomUUID().toString();
+            String objectName = projectId + "/" + uuid + ".webp";
+
+            // BlobInfo 설정
             BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, objectName)
-                    .setContentType("image/webp")
-                    .build();
-            storage.create(blobInfo, Files.readAllBytes(tempFile));
-            
-            // 임시 파일 삭제
-            Files.delete(tempFile);
-            
+                .setContentType("image/webp")
+                .build();
+
+            // GCS에 업로드
+            storage.create(blobInfo, webpBytes);
+
             return "https://storage.googleapis.com/" + bucketName + "/" + objectName;
         } catch (IOException e) {
             throw new CustomException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    ErrorCode.STORAGE_IO_ERROR,
-                    "Failed to upload file: " + e.getMessage()
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ErrorCode.STORAGE_IO_ERROR,
+                "Failed to upload file: " + e.getMessage()
             );
         }
     }
