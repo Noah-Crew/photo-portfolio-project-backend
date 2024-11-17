@@ -21,6 +21,7 @@ import javax.imageio.stream.ImageOutputStream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.portfolio.exception.CustomException;
@@ -41,21 +42,21 @@ public class GcsService {
     private final Storage storage;
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
-//    public GcsService(@Value("${spring.cloud.gcp.storage.credentials.location}") String keyFileName) throws IOException {
-//        InputStream keyFile = ResourceUtils.getURL(keyFileName).openStream();
-//        this.storage = StorageOptions.newBuilder()
-//                .setCredentials(GoogleCredentials.fromStream(keyFile))
-//                .build()
-//                .getService();
-//    }
-    public GcsService() {
-        try {
-            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
-            this.storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to initialize GCS credentials", e);
-        }
+    public GcsService(@Value("${spring.cloud.gcp.storage.credentials.location}") String keyFileName) throws IOException {
+        InputStream keyFile = ResourceUtils.getURL(keyFileName).openStream();
+        this.storage = StorageOptions.newBuilder()
+                .setCredentials(GoogleCredentials.fromStream(keyFile))
+                .build()
+                .getService();
     }
+//    public GcsService() {
+//        try {
+//            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+//            this.storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+//        } catch (IOException e) {
+//            throw new RuntimeException("Failed to initialize GCS credentials", e);
+//        }
+//    }
 
 
     // WebP 파일 업로드 메서드
